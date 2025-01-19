@@ -2,19 +2,11 @@ import { fetchAllContacts, fetchContactById } from '../services/contacts';
 
 export const getAllContacts = async (req, res) => {
   try {
-    const contacts = await fetchAllContacts();
-
-    res.status(200).json({
-      status: 200,
-      message: "Successfully found contacts!",
-      data: contacts,
-    });
+    const contacts = await fetchAllContacts.find();
+    res.status(200).json(contacts); 
   } catch (error) {
-    res.status(500).json({
-      status: 500,
-      message: "Failed to fetch contacts.",
-      error: error.message,
-    });
+    console.error('Error fetching contacts:', error);
+    res.status(500).json({ message: 'Failed to fetch contacts' });
   }
 };
 
