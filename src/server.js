@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import pino from 'pino-http';
-import contacts from './db/models/contacts.js';
+import contacts from './routes/contacts.js';
 
 const PORT = process.env.PORT || 3000;
 
