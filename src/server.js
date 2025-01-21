@@ -19,6 +19,12 @@ export const startServer = () => {
     }),
   );
 
+  app.get('/', (req, res) => {
+    res.status(200).json({
+      message: 'Welcome to the Contacts API!',
+    });
+  });
+
   app.get('/contacts', async (req, res, next) => {
     try {
       const contacts = await getAllContacts();
