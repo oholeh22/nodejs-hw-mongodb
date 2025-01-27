@@ -14,7 +14,7 @@ export const startServer = () => {
   app.use(express.json());
   app.use(cors());
   app.use(
-    pino({ 
+    pino({
       transport: {
         target: 'pino-pretty',
       },
@@ -27,7 +27,7 @@ export const startServer = () => {
     });
   });
 
-  app.use(contactsRouter);
+  app.use('/contacts', contactsRouter);
 
   app.use('*', notFoundHandler);
 

@@ -1,6 +1,6 @@
 import createHttpError from "http-errors";
-import { createContact, deleteContact, getAllContacts, getContactById, updateContact } from '../services/contacts';
-import { ctrlWrapper } from "../utils/ctrlWrapper";
+import { createContact, deleteContact, getAllContacts, getContactById, updateContact } from '../services/contacts.js';
+import { ctrlWrapper } from "../utils/ctrlWrapper.js";
 
 export const getContactsController = async (
     req,
