@@ -7,7 +7,7 @@ import {
     deleteContactController,
     upsertContactController,
     patchContactController,
-  } from '../controllers/students.js';
+  } from '../controllers/contacts.js';
 
 const router = Router();
 
