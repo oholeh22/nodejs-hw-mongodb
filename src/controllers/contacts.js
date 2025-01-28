@@ -1,6 +1,5 @@
 import createHttpError from "http-errors";
 import { createContact, deleteContact, getAllContacts, getContactById, updateContact } from '../services/contacts.js';
-import { ctrlWrapper } from "../utils/ctrlWrapper.js";
 
 export const getContactsController = async (
     req,
@@ -46,15 +45,18 @@ export const getContactsController = async (
     });
   };
 
-  export const deleteContactController = ctrlWrapper(async (req, res) => {
+  export const deleteContactController = async (req, res, next) => {
     const { contactId } = req.params;
 
     const contact = await deleteContact(contactId);
+
     if (!contact) {
-      throw createHttpError(404, 'Contact not found');
+      next(createHttpError(404, 'Contact not found'));
+      return;
     }
+
     res.status(204).send();
-  });
+  };
 
 
   export const upsertContactController = async (req, res, next) => {
@@ -80,17 +82,16 @@ export const getContactsController = async (
 
   export const patchContactController = async (req, res, next) => {
     const { contactId } = req.params;
+    const result = await updateContact(contactId, req.body);
 
-    const updatedContact = await updateContact(contactId, req.body);
-
-    if (!updatedContact) {
+    if (!result) {
       next(createHttpError(404, 'Contact not found'));
       return;
     }
 
-    res.status(200).json({
+    res.json({
       status: 200,
-      message: "Successfully patched a contact!",
-      data: updatedContact,
+      message: 'Successfully patched a contact!',
+      data: result.contact,
     });
   };
