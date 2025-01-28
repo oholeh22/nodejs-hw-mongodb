@@ -1,6 +1,5 @@
 import createHttpError from "http-errors";
 import { createContact, deleteContact, getAllContacts, getContactById, updateContact } from '../services/contacts.js';
-import { ctrlWrapper } from "../utils/ctrlWrapper.js";
 
 export const getContactsController = async (
     req,
@@ -46,15 +45,18 @@ export const getContactsController = async (
     });
   };
 
-  export const deleteContactController = ctrlWrapper(async (req, res) => {
+  export const deleteContactController = async (req, res, next) => {
     const { contactId } = req.params;
 
     const contact = await deleteContact(contactId);
+
     if (!contact) {
-      throw createHttpError(404, 'Contact not found');
+      next(createHttpError(404, 'Contact not found'));
+      return;
     }
+
     res.status(204).send();
-  });
+  };
 
 
   export const upsertContactController = async (req, res, next) => {
@@ -79,20 +81,17 @@ export const getContactsController = async (
   };
 
   export const patchContactController = async (req, res, next) => {
-    try {
-      const { contactId } = req.params;
-      const updatedContact = await updateContact(contactId, req.body);
+    const { contactId } = req.params;
+    const result = await updateContact(contactId, req.body);
 
-      if (!updatedContact) {
-        return next(createHttpError(404, 'Contact not found'));
-      }
-
-      res.json({
-        status: 200,
-        message: 'Successfully patched the contact!',
-        data: updatedContact, 
-      });
-    } catch (err) {
-      next(err);
+    if (!result) {
+      next(createHttpError(404, 'Contact not found'));
+      return;
     }
+
+    res.json({
+      status: 200,
+      message: 'Successfully patched a contact!',
+      data: result.contact,
+    });
   };
