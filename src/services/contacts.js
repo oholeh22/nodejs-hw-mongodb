@@ -1,8 +1,10 @@
-import { ContactsCollection } from '../db/models/contacts.js';
+import { ContactsCollection, Contact } from '../db/models/contacts.js';
 
-export const getAllContacts = async () => {
-  const contacts = await ContactsCollection.find();
-  return contacts;
+export const getAllContacts = async (page, perPage) => {
+  const totalItems = await Contact.countDocuments();
+  const skip = (page - 1) * perPage;
+  const contacts = await Contact.find().skip(skip).limit(perPage);
+  return { totalItems, contacts };
 };
 
 export const getContactById = async (contactId) => {
