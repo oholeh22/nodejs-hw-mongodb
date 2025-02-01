@@ -1,23 +1,32 @@
 import createHttpError from "http-errors";
 import { createContact, deleteContact, getAllContacts, getContactById, updateContact } from '../services/contacts.js';
 
-export const getContactsController = async (
-    req,
-    res,
-      next,
-  ) => {
-      try {
-        const contacts = await getAllContacts();
+export const getContactsController = async (req, res, next) => {
+  try {
+    let { page = 1, perPage = 10 } = req.query;
+    page = parseInt(page, 10);
+    perPage = parseInt(perPage, 10);
 
-        res.json({
-          status: 200,
-          message: 'Successfully found contacts!',
-          data: contacts,
-        });
-      } catch(err) {
-          next(err);
-      }
-  };
+    const { totalItems, contacts } = await getAllContacts(page, perPage);
+    const totalPages = Math.ceil(totalItems / perPage);
+
+    res.status(200).json({
+      status: 200,
+      message: "Successfully found contacts!",
+      data: {
+        data: contacts,
+        page,
+        perPage,
+        totalItems,
+        totalPages,
+        hasPreviousPage: page > 1,
+        hasNextPage: page < totalPages,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 
   export const getContactByIdController = async (req, res) => {
     const { contactId } = req.params;
