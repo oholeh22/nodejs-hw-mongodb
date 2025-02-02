@@ -5,8 +5,8 @@ import {
     getContactByIdController,
     createContactController,
     deleteContactController,
-    upsertContactController,
     patchContactController,
+    upsertContactController,
   } from '../controllers/contacts.js';
 import { contactCreateSchema, contactUpdateSchema } from "../validation/contacts.js";
 import { isValidId } from "../middlewares/isValidId.js";
