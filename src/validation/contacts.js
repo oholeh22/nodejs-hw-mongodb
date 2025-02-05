@@ -1,13 +1,44 @@
 import Joi from 'joi';
 
 export const contactCreateSchema = Joi.object({
-  name: Joi.string().min(3).max(20).required(),
-  email: Joi.string().email().min(3).max(20).required(),
-  phoneNumber: Joi.string().min(3).max(20).required(),
+  name: Joi.string().min(3).max(20).required().messages({
+    'string.base': 'Username should be a string',
+    'string.min': 'Username should have at least {#limit} characters',
+    'string.max': 'Username should have at most {#limit} characters',
+    'any.required': 'Username is required',
+  }),
+  email: Joi.string().email().min(3).max(20).messages({
+    'string.email': 'Please provide a valid email address',
+  }),
+  phoneNumber: Joi.string()
+    .regex(/^\+[0-9]{3,20}$/)
+    .min(3)
+    .max(20)
+    .required()
+    .messages({
+      'string.pattern.base':
+        'Phone number must contain only + and digits and be between 3 and 20 characters',
+      'any.required': 'Phone number is required',
+    }),
+  contactType: Joi.string()
+    .valid('work', 'home', 'personal')
+    .required()
+    .messages({
+      'any.only': 'Contact type must be one of [work, home, personal]',
+    }),
+
+  isFavourite: Joi.boolean().messages({
+    'boolean.base': 'Favourite must be a boolean',
+  }),
 });
 
 export const contactUpdateSchema = Joi.object({
   name: Joi.string().min(3).max(20),
   email: Joi.string().email().min(3).max(20),
-  phoneNumber: Joi.string().min(3).max(20),
-}).min(1);
+  phoneNumber: Joi.string()
+    .regex(/^\+[0-9]{3,20}$/)
+    .min(3)
+    .max(20),
+  contactType: Joi.string().valid('work', 'home', 'personal'),
+  isFavourite: Joi.boolean(),
+});
