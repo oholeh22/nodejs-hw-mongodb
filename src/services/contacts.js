@@ -2,6 +2,7 @@ import { SORT_ORDER } from '../constans/index.js';
 import { ContactsCollection } from '../db/models/contacts.js';
 import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 import { validatePagination } from '../utils/validatePagination.js';
+import createHttpError from 'http-errors';
 
 export const getAllContacts = async ({
   page = 1,
@@ -42,38 +43,47 @@ export const getAllContacts = async ({
     ...paginationData,
   };
 };
-export const getContactById = async (contactId) => {
-  const contact = await ContactsCollection.findById(contactId);
+
+export const getContactById = async (contactId, userId) => {
+  const contact = await ContactsCollection.findOne({ _id: contactId, userId });
+  if (!contact) {
+    throw createHttpError(404, 'Contact not found');
+  }
   return contact;
 };
 
-export const createContact = async (payload) => {
-  const contact = await ContactsCollection.create(payload);
+export const createContact = async (payload, userId) => {
+  const contact = await ContactsCollection.create({
+    ...payload,
+    userId,
+  });
   return contact;
 };
 
-export const deleteContact = async (contactId) => {
+
+export const deleteContact = async (contactId, userId) => {
   const contact = await ContactsCollection.findOneAndDelete({
     _id: contactId,
+    userId,
   });
-
+  if (!contact) {
+    throw createHttpError(404, 'Contact not found');
+  }
   return contact;
 };
 
-export const updateContact = async (contactId, payload) => {
-  const rawResult = await ContactsCollection.findByIdAndUpdate(
-    {
-      _id: contactId,
-    },
+export const updateContact = async (contactId, payload, userId) => {
+  const contact = await ContactsCollection.findOneAndUpdate(
+    { _id: contactId, userId },
     payload,
     { new: true },
   );
 
-  if (!rawResult) return null;
+  if (!contact) {
+    throw createHttpError(404, 'Contact not found');
+  }
 
-  return {
-    contact: rawResult,
-  };
+  return contact;
 };
 
 export const upsertContact = async (contactId, payload) => {

@@ -5,6 +5,8 @@ import { getEnvVar } from './utils/getEnvVar.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import contactsRouter from './routes/contacts.js';
+import router from './routes/index.js';
+import cookieParser from 'cookie-parser';
 
 const PORT = Number(getEnvVar('PORT', '3000'));
 
@@ -13,6 +15,7 @@ export const startServer = () => {
 
   app.use(express.json());
   app.use(cors());
+  app.use(cookieParser());
   app.use(
     pino({
       transport: {
@@ -32,6 +35,8 @@ export const startServer = () => {
   app.use('*', notFoundHandler);
 
   app.use(errorHandler);
+
+  app.use(router);
 
 
   app.listen(PORT, () => {
