@@ -31,13 +31,11 @@ export const startServer = () => {
   });
 
   app.use('/contacts', contactsRouter);
+  app.use(router);
 
   app.use('*', notFoundHandler);
 
   app.use(errorHandler);
-
-  app.use(router);
-
 
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
