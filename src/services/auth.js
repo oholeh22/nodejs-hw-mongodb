@@ -8,7 +8,7 @@ import {
   TEMPLATES_DIR,
   THIRTY_DAYS,
   SMTP
-} from '../constants/contacts.js';
+} from '../constans/index.js';
 import { getEnvVar } from '../utils/getEnvVar.js';
 import { sendEmail } from '../utils/sendMail.js';
 import jwt from 'jsonwebtoken';
