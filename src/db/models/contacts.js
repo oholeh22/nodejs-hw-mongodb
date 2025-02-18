@@ -19,8 +19,8 @@ const contactsSchema = new Schema(
     },
     contactType: {
       type: String,
-      required: true,
       enum: ['work', 'home', 'personal'],
+      required: true,
       default: 'personal',
     },
     userId: {
@@ -28,11 +28,15 @@ const contactsSchema = new Schema(
       required: true,
       ref: 'users',
     },
+    photo: {
+      type: String,
+      default: '',
+    },
   },
   {
     timestamps: true,
     versionKey: false,
-  }
+  },
 );
 
 export const ContactsCollection = model('contacts', contactsSchema);
