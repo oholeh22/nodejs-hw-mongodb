@@ -17,10 +17,7 @@ import path from 'node:path';
 import fs from 'node:fs/promises';
 
 export const registerUser = async (payload) => {
-  const user = await UsersCollection.findOne({
-    email: payload.email,
-  });
-
+  const user = await UsersCollection.findOne({ email: payload.email });
   if (user) throw createHttpError(409, 'Email in use');
 
   const encryptedPassword = await bcrypt.hash(payload.password, 10);
@@ -31,11 +28,7 @@ export const registerUser = async (payload) => {
   });
 
   const { password, ...noPasswordUser } = newUser.toObject();
-  return {
-    status: 201,
-    message: 'Successfully created a user',
-    data: noPasswordUser,
-  };
+  return noPasswordUser;
 };
 
 export const loginUser = async (payload) => {
