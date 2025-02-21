@@ -1,4 +1,3 @@
-import createHttpError from 'http-errors';
 import {
   createContact,
   deleteContact,
@@ -10,6 +9,7 @@ import {
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
+import createHttpError from 'http-errors';
 
 export const getContactsController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
@@ -48,7 +48,11 @@ export const getContactByIdController = async (req, res) => {
 
 export const createContactController = async (req, res) => {
   const userId = req.user._id;
-  const contact = await createContact(req.body, userId);
+  const contactData = { ...req.body };
+  if (req.file) {
+    contactData.photo = req.file.path;
+  }
+  const contact = await createContact(contactData, userId);
 
   res.status(201).json({
     status: 201,
@@ -60,7 +64,13 @@ export const createContactController = async (req, res) => {
 export const patchContactController = async (req, res, next) => {
   const { contactId } = req.params;
   const userId = req.user._id;
-  const updatedContact = await updateContact(contactId, req.body, userId);
+  const updateData = { ...req.body };
+
+  if (req.file) {
+    updateData.photo = req.file.path;
+  }
+
+  const updatedContact = await updateContact(contactId, updateData, userId);
 
   res.json({
     status: 200,
