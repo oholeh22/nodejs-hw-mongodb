@@ -1,0 +1,63 @@
+tags:
+  - Auth
+summary: Login user
+operationId: loginUser
+description: 'Login user'
+security: []
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - email
+          - password
+        properties:
+          email:
+            description: 'User`s email'
+            type: string
+          password:
+            description: 'User`s password'
+            type: string
+responses:
+  '200':
+    description: Successfully logged in user!
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Successfully logged in user!
+            data:
+              type: object
+              required:
+                - accessToken
+              properties:
+                accessToken:
+                  type: string
+                  example: '5KaQw8Lj2NzRhY7Xu3TpV0CiDeFm1Gb6WsVo9KmJ'
+  '401':
+    description: Invalid login or password
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+          properties:
+            status:
+              type: integer
+              example: 401
+            message:
+              type: string
+              example: Invalid login or password

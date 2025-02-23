@@ -7,6 +7,7 @@ import { errorHandler } from './middlewares/errorHandler.js';
 import contactsRouter from './routes/contacts.js';
 import router from './routes/index.js';
 import cookieParser from 'cookie-parser';
+import { swaggerDocs } from './middlewares/swaggerDocs.js';
 
 const PORT = Number(getEnvVar('PORT', '3000'));
 
@@ -15,6 +16,7 @@ export const startServer = () => {
 
   app.use(express.json());
   app.use(cors());
+  app.use('/api-docs', swaggerDocs());
   app.use(cookieParser());
   app.use(
     pino({
