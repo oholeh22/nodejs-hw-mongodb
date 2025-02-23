@@ -9,6 +9,7 @@ import {
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 import createHttpError from 'http-errors';
 
 export const getContactsController = async (req, res) => {
@@ -49,9 +50,12 @@ export const getContactByIdController = async (req, res) => {
 export const createContactController = async (req, res) => {
   const userId = req.user._id;
   const contactData = { ...req.body };
+
   if (req.file) {
-    contactData.photo = req.file.path;
+    const photoUrl = await saveFileToCloudinary(req.file);
+    contactData.photo = photoUrl;
   }
+
   const contact = await createContact(contactData, userId);
 
   res.status(201).json({
@@ -61,13 +65,14 @@ export const createContactController = async (req, res) => {
   });
 };
 
-export const patchContactController = async (req, res, next) => {
+export const patchContactController = async (req, res) => {
   const { contactId } = req.params;
   const userId = req.user._id;
   const updateData = { ...req.body };
 
   if (req.file) {
-    updateData.photo = req.file.path;
+    const photoUrl = await saveFileToCloudinary(req.file);
+    updateData.photo = photoUrl;
   }
 
   const updatedContact = await updateContact(contactId, updateData, userId);
@@ -79,7 +84,7 @@ export const patchContactController = async (req, res, next) => {
   });
 };
 
-export const deleteContactController = async (req, res, next) => {
+export const deleteContactController = async (req, res) => {
   const { contactId } = req.params;
   const userId = req.user._id;
 
